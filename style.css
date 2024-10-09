@@ -1,0 +1,56 @@
+*{
+    font-family: 'Courier New', Courier, monospace;
+}
+body{
+    font-size: 18px;
+    padding:0;
+    margin:0;
+}
+#navbar-title{
+    font-size:32px;
+    padding:0;
+    margin:0;
+}
+#navbar-links{
+    list-style-type:none;
+    overflow:hidden;
+    background-color:coral;
+    padding:0;
+    margin:0;
+}
+#navbar-links >li{
+    float:left;
+}
+#navbar-links >li >a{
+    display:block;
+    text-align:center;
+    padding:14px 16px;
+    text-decoration: none;
+    text-decoration-color:white;
+    color:black;
+}
+#navbar-links >li >a:hover{
+    background-color:darkcyan;
+}
+
+#sketch-holder{
+    padding-top: 32px;
+    padding-bottom:32px;
+    border: 6px solid coral;
+    border-radius: 0px 0px 10px 10px;
+}
+
+ul{
+    list-style-type: none;
+    padding-left:0.25em;
+}
+
+p{
+    margin:0;
+    padding:0;
+}
+li >p:hover {
+    background-color: coral;
+    color:red;
+    font-size: 24px;
+}
