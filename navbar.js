@@ -3,6 +3,7 @@ let navbarTitle = "RealWizardVHS"
 let navbarLinks = [
     {name: "Home", url: "index.html"},
     {name: "Projects", url: "projects.html"},
+    {name: "Links", url: "links.html"},
 ]
 
 document.addEventListener('DOMContentLoaded', function() {
