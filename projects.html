@@ -28,25 +28,30 @@
 
 
     <script>
-        const creative_coding = [
-            {
-                title: "Particles - 10/9/2024",
-                path: "particles_10_9_2024.html"
-            }
+        const projects = [
+            ["particles", 10,9,2024],
+            ["particles_typography", 10,9,2024],
         ]
 
-        const project_list = document.getElementById("project_list");
+        function filepath(project_name, month, day,year){
+            return project_name + "_" + month + "_" + day + "_" + year
+        }
 
+        let project_list = document.getElementById("project_list")
 
-        creative_coding.forEach(project => {
-            const project_link = document.createElement("a");
-            project_link.href = project.path;
-            project_link.innerHTML = project.title;
-            project_link.className = "d-block";
-            project_list.appendChild(project_link);
-        });
+        for (let i = 0; i < projects.length; i++){
+            let project = projects[i]
+            let project_name = project[0]
+            let month = project[1]
+            let day = project[2]
+            let year = project[3]
 
-
+            let project_link = document.createElement("a")
+            project_link.href = filepath(project_name, month, day, year) + ".html"
+            project_link.innerHTML = project_name
+            project_list.appendChild(project_link)
+            project_list.appendChild(document.createElement("br"))
+        }
     </script>
 </body>
 </html>
