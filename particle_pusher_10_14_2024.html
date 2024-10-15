@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"></script>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <meta charset="utf-8">
+    <title>Sketch</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div id="navbar"></div>
+            </div>  
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <div id="sketch-holder"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <div id="sketch-controls">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 id="art_title">Particle Pusher</h1>
+                <p id="art_date">10/15/2024</p>
+                <p id="art-description">Click and drag to move particles around</p>
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="navbar.js"></script>
+    <script>
+        let canvass
+        let font;
+
+        class Particle{
+            constructor(x,y, radius){
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.vx = random(-1,1);
+                this.vy = random(-1,1);
+                this.color = color(random(360), 100, 50);
+            }
+
+            display(){
+                noStroke();
+                fill(this.color);
+                rect(this.x, this.y, this.radius/2, this.radius/2);
+            }
+
+
+        }
+
+        function preload(){
+            font = loadFont('/Inconsolata.otf')
+        }
+
+
+        let particles = [];
+        let cellSize = 60;
+
+        function mousePressed(){
+           let vec = snapToGrid(mouseX, mouseY);
+              particles.push(new Particle(vec.x, vec.y, random(5,10)));
+        }
+
+        function mouseDragged(){
+            for(let i=0; i<15; i++){
+                let vec = snapToGrid(mouseX + random(-150,150), mouseY + random(-150,150));
+
+                for(let p of particles){
+                    if (dist(vec.x, vec.y, p.x, p.y)> 180){
+                        continue;
+                    }else{
+
+                        let ox = p.x;
+                        let oy = p.y;
+
+                        //push away
+                        let angle = atan2(p.y - vec.y, p.x - vec.x);
+                        p.x += cos(angle) * 0.5;
+                        p.y += sin(angle) * 0.5;
+                        p.radius = random(5,10);
+                    }
+                }
+                particles.push(new Particle(vec.x, vec.y, random(5,10)));
+            }
+
+                
+
+
+
+        }
+
+        function snapToGrid(x, y){
+            return createVector(floor(x/cellSize) * cellSize + cellSize/2, floor(y/cellSize) * cellSize + cellSize/2);
+        }
+
+        function setup() {
+            canvas = createCanvas(600, 600)
+            canvas.parent("sketch-holder")
+            pixelDensity(1);
+            colorMode(HSL)
+            rectMode(CENTER)
+
+            cellSize = width/40;
+
+            let done_pairs = [];
+            for (let i = 0; i < 1500; i++){
+                let vec = snapToGrid(random(width), random(height));
+                if (done_pairs.some(p => p.x == vec.x && p.y == vec.y)){
+                    continue;
+                }
+                done_pairs.push(vec);
+                particles.push(new Particle(vec.x,vec.y, random(cellSize *0.55, cellSize * .85)));
+
+            }
+        }
+
+        function draw() {
+            background(220);
+            for (let p of particles){
+                p.display()
+            }
+        }
+
+    </script>
+</body>
+</html>
