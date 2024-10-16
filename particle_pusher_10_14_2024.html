@@ -69,12 +69,8 @@
         let particles = [];
         let cellSize = 60;
 
-        function mousePressed(){
-           let vec = snapToGrid(mouseX, mouseY);
-              particles.push(new Particle(vec.x, vec.y, random(5,10)));
-        }
 
-        function mouseDragged(){
+        function dothing(){
             for(let i=0; i<15; i++){
                 let vec = snapToGrid(mouseX + random(-150,150), mouseY + random(-150,150));
 
@@ -115,23 +111,26 @@
 
             cellSize = width/40;
 
-            let done_pairs = [];
             for (let i = 0; i < 1500; i++){
                 let vec = snapToGrid(random(width), random(height));
-                if (done_pairs.some(p => p.x == vec.x && p.y == vec.y)){
-                    continue;
-                }
-                done_pairs.push(vec);
                 particles.push(new Particle(vec.x,vec.y, random(cellSize *0.55, cellSize * .85)));
 
             }
+
+
         }
 
         function draw() {
             background(220);
+            console.log(particles.length)
+            if(mouseIsPressed){
+                dothing();
+            }
             for (let p of particles){
                 p.display()
             }
+
+            
         }
 
     </script>
