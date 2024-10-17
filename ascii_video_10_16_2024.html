@@ -19,15 +19,16 @@
         </div>
         <div class="row">
             <div class="col-12 text-center">
-                <div id="sketch-holder"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 text-center">
                 <div id="sketch-controls">
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <div id="sketch-holder"></div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12 text-center">
                 <h1 id="art_title"></h1>
@@ -41,7 +42,24 @@
     <script src="navbar.js"></script>
     <!-- Your p5.js sketch -->
     <script>
-        let gifs = ["bike", "bike2","cyber2", "horse", "thing", "thing2"]
+        let gifs = [
+            ["anime",4],
+            ["bike",2],
+            ["car",1],
+            ["cat",2],
+            ["cyberpunk",5],
+            ["effect",5],
+            ["falling",3],
+            ["guitar",1],
+            ["gun_spin",1],
+            ["horse",1],
+            ["optical_illusion",1],
+            ["piano",1],
+            ["retro",9],
+            ["spinning_record",1],
+            ["train",2],
+            ["wizard",1],
+        ]
         let canvas;
         let font;
         let img;
@@ -50,6 +68,7 @@
         let asciiCharacters = "+*-=██*"; // Set of characters used to create structure-based ASCII art.
         let maxFontSize = 8;
     
+        let buttons = []
         function preload() {
             font = loadFont('Inconsolata.otf'); // Provide path to your font file here.
             // Removed img loading from here
@@ -61,25 +80,30 @@
             frameRate(20); // Control the speed of GIF playback.
             textSize(maxFontSize); // Use maximum font size value
             textAlign(LEFT, TOP);
-    
-            // Create buttons once
+
+            console.log(gifs)
+            let controls = document.getElementById("sketch-controls");
             for (let i = 0; i < gifs.length; i++) {
-                let gifName = gifs[i]; // Capture the current value of gifs[i]
-                let button = createButton(gifName);
-                button.parent("sketch-controls");
-                button.mousePressed(() => {
-                    loadImage(gifName + '.gif', (loadedImg) => {
-                        img = loadedImg;
-                        resetSketch();
+                let num_buttons = gifs[i][1]
+                for(let j = 1; j <= num_buttons; j++){
+                    let button = createButton(gifs[i][0] + " " + j);
+                    button.parent(controls);
+                    button.mousePressed(() => {
+                        img = loadImage("gifs/" + gifs[i][0] + "_" + j + ".gif", resetSketch);
+                        document.getElementById("art_title").innerHTML = gifs[i][0] + " " + j;
+                        document.getElementById("art_date").innerHTML = "10/16/2024";
+                        document.getElementById("art-description").innerHTML = "This is a description of the art piece.";
                     });
-                });
+                    buttons.push(button)
+                }
             }
-    
-            // Load initial image
-            loadImage('bike.gif', (loadedImg) => {
-                img = loadedImg;
-                resetSketch();
-            });
+
+            //load train_2.gif by default
+            img = loadImage("gifs/train_2.gif", resetSketch);
+            document.getElementById("art_title").innerHTML = "train 2";
+            document.getElementById("art_date").innerHTML = "10/16/2024";
+            document.getElementById("art-description").innerHTML = "This is a description of the art piece.";
+
         }
     
         function resetSketch() {
