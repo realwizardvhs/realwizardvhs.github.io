@@ -1,4 +1,3 @@
-// This name (awesomeCirclesSketch) must be unique and match what's in main.js
 window.spinningCirclesSketch = (p) => {
     let angle = 0;
 
