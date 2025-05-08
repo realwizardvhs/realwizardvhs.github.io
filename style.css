@@ -1,56 +1,143 @@
-*{
-    font-family: 'Courier New', Courier, monospace;
-}
-body{
-    font-size: 18px;
-    padding:0;
-    margin:0;
-}
-#navbar-title{
-    font-size:32px;
-    padding:0;
-    margin:0;
-}
-#navbar-links{
-    list-style-type:none;
-    overflow:hidden;
-    background-color:coral;
-    padding:0;
-    margin:0;
-}
-#navbar-links >li{
-    float:left;
-}
-#navbar-links >li >a{
-    display:block;
-    text-align:center;
-    padding:14px 16px;
-    text-decoration: none;
-    text-decoration-color:white;
-    color:black;
-}
-#navbar-links >li >a:hover{
-    background-color:darkcyan;
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    /* display: flex; */ /* Removed to allow app-container to manage flex */
+    /* flex-direction: column; */ /* Removed */
+    min-height: 100vh;
 }
 
-#sketch-holder{
-    padding-top: 32px;
-    padding-bottom:32px;
-    border: 6px solid coral;
-    border-radius: 0px 0px 10px 10px;
+#app-container {
+    display: flex;
+    min-height: 100vh; /* Make app container fill viewport height */
 }
 
-ul{
+#sidebar {
+    width: 250px; /* Fixed width for sidebar, adjust as needed */
+    /* flex: 0 0 250px; */ /* Alternative: flex-grow, flex-shrink, flex-basis */
+    background-color: #e9e9e9;
+    padding: 15px;
+    height: 100vh; /* Full viewport height */
+    overflow-y: auto; /* Add scroll for long sketch lists */
+    box-sizing: border-box;
+    border-right: 1px solid #ccc;
+}
+
+#sidebar h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+#sketch-list-container {
     list-style-type: none;
-    padding-left:0.25em;
+    padding: 0;
+    margin: 0;
 }
 
-p{
-    margin:0;
-    padding:0;
+#sketch-list-container li {
+    padding: 10px 5px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.95em;
 }
-li >p:hover {
-    background-color: coral;
-    color:red;
-    font-size: 24px;
+
+#sketch-list-container li:hover {
+    background-color: #d8d8d8;
+}
+
+#sketch-list-container li.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+#content-wrapper {
+    flex-grow: 1; /* Takes remaining space */
+    display: flex;
+    flex-direction: column; /* To stack header, main, footer */
+    /* overflow-y: auto; */ /* Allow content itself to scroll if needed, not the whole wrapper */
+}
+
+
+footer {
+    /* background-color: #333; */ /* Original background */
+    background-color: transparent; /* New: Transparent background */
+    /* color: #ccc; */ /* REMOVE default color, will be handled by classes */
+    padding: 5px 1em; /* New: Reduced padding */
+    /* text-align: center; */ /* REMOVE: to make text align left for a single line */
+    position: absolute; /* New: Position absolutely */
+    left: 0;
+    width: 100%;
+    box-sizing: border-box; /* Ensure padding doesn't add to width */
+    z-index: 10; /* Ensure it's above other content in main, like the canvas */
+    font-size: 0.8em; /* New: Make text smaller */
+}
+
+/* New classes for footer text color based on sketch background */
+footer.light-text p {
+    color: #f0f0f0; /* Light text color for dark sketch backgrounds */
+}
+
+footer.dark-text p {
+    color: #333; /* Dark text color for light sketch backgrounds */
+}
+
+main {
+    flex-grow: 1; /* Main content area takes available space within content-wrapper */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative; /* New: Make main a positioning context for the absolute footer */
+    /* overflow-y: auto; */
+}
+
+/* Aspect Ratio Wrapper */
+#sketch-aspect-ratio-wrapper {
+    width: 100%; /* Max width of the sketch container */
+    height: 100%;
+    margin: 0; /* Or whatever fixed max width you prefer */
+    position: relative; /* Needed for absolute positioning of the child */
+    background-color: transparent; /* Placeholder, you'll see the canvas over it */
+}
+
+
+
+
+
+
+#sketch-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex; /* Helps center canvas if it's smaller */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Ensure canvas itself doesn't have extra margins/paddings */
+#sketch-container canvas {
+    display: block; /* Removes extra space below canvas if it's an inline element */
+    max-width: 100%;
+    max-height: 100%;
+    border: 4px dashed black; /* Default border */
+    box-sizing: border-box; /* Ensures border is inside the element's dimensions */
+}
+
+/* New rules for dynamic canvas border color */
+#sketch-container.light-bg-sketch canvas {
+    border-color: black; /* Dark border for light sketch backgrounds */
+}
+
+#sketch-container.dark-bg-sketch canvas {
+    border-color: #f0f0f0; /* Light border for dark sketch backgrounds */
+}
+
+#sketch-info {
+    text-align: center;
 }
