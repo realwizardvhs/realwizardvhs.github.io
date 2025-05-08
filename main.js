@@ -11,12 +11,54 @@ document.addEventListener('DOMContentLoaded', () => {
     // 'file': Path to the sketch's JS file
     const sketches = [
         {
+            id: 'tentacle',
+            name: 'Tentacle',
+            description:'',
+            sketchFunction: 'tentacleSketch',
+            file: 'sketches/tentacle.js',
+        },
+        {
+            id: 'spinningShapes',
+            name: 'Spinning Shapes',
+            description:'',
+            sketchFunction: 'spinningShapesSketch',
+            file: 'sketches/spinning_shapes.js',
+        },
+        {
             id: 'spinningCircles',
             name: 'Spinning Circles',
             description:'',
             sketchFunction: 'spinningCirclesSketch',
             file: 'sketches/spinningCircles.js',
 
+        },
+        {
+            id:'sineWaves',
+            name:'Sine Waves',
+            description:'',
+            sketchFunction: 'sineWavesSketch',
+            file: 'sketches/sineWaves.js'
+        },
+        {
+            id:'sineWaves2',
+            name:'Sine Waves 2',
+            description:'',
+            sketchFunction: 'sineWavesSketch2',
+            file: 'sketches/sineWaves2.js'
+        },
+        {
+            id:'sineWaves3',
+            name:'Sine Waves 3',
+            description:'',
+            sketchFunction: 'sineWavesSketch3',
+            file: 'sketches/sineWaves3.js'
+        },
+        {
+            id:'rotatingWaves',
+            name:'Rotating Waves',
+            description:'',
+            sketchFunction: 'rotatingWavesSketch',
+            file: 'sketches/rotatingWaves.js'
         },
         {
             id: 'particlesFolder', // Changed ID to reflect it's a folder/category
