@@ -163,4 +163,47 @@ window.particleTypographySketch = (p) => {
         p.background(255, 100); // Redraw background
         calculateTextPoints();
     };
+
+    function getNearbyPoints(x, y, searchRadius, numPointsToFind) {
+        if (!particleStringPoints) return [];
+
+        let nearbyPoints = [];
+        let shuffledPoints = p.shuffle(particleStringPoints); // Shuffle to get random points if many are nearby
+
+        for (let pt of shuffledPoints) {
+            let distance = p.dist(x, y, pt.x, pt.y);
+            if (distance < searchRadius) {
+                nearbyPoints.push(pt);
+                if (nearbyPoints.length >= numPointsToFind) {
+                    break;
+                }
+            }
+        }
+        return nearbyPoints;
+    }
+
+    p.mouseDragged = () => {
+        const clickX = p.mouseX;
+        const clickY = p.mouseY;
+        const searchRadius = 150; // How far from the click to look for points
+        const numPointsToSpawnFrom = 15; // Number of distinct points to use for spawning
+        const particlesPerPoint = 4; // Number of particles to spawn at each found point
+
+        let nearbyPoints = getNearbyPoints(clickX, clickY, searchRadius, numPointsToSpawnFrom);
+
+        if (nearbyPoints.length > 0) {
+            for (let pt of nearbyPoints) {
+                for (let i = 0; i < particlesPerPoint; i++) {
+                    let newParticle = new Particle(
+                        pt.x + p.random(-25,25),
+                        pt.y + p.random(-25,25),
+                        p.random(2, 12), // Slightly smaller for click burst
+                        p.color(p.random(360), 90, 70), // Brighter for click burst
+                        p.random(100, 200) // Shorter lifespan for click burst
+                    );
+                    particles.push(newParticle);
+                }
+            }
+        }
+    };
 }; 

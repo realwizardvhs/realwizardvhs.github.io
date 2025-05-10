@@ -4,12 +4,31 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentP5Instance = null;
     let currentActiveListItem = null; // To keep track of the active list item
 
+    // --- Define sketch-specific control container IDs ---
+    // const sketchControlContainerIds = {
+    //     // 'neuralAnt': 'neuralAntControlsContainer' // This will be handled dynamically by the sketch itself
+    // };
+
     // --- Define your sketches here ---
     // 'id' should be unique and can be used for file naming (convention)
     // 'name' is for display in the dropdown
     // 'sketchFunction': The name of the function defined in the sketch's JS file
     // 'file': Path to the sketch's JS file
     const sketches = [
+        {
+            id: 'neuralNetworksFolder',
+            name: 'Neural Networks',
+            description: 'A collection of neural network sketches.',
+            children: [
+                {
+                    id: 'neuralAnt',
+                    name: 'Neural Ant',
+                    description: '',
+                    sketchFunction: 'neuralAntSketch',
+                    file: 'sketches/neural_networks/neural_ant.js',
+                }
+            ]
+        },
         {
             id: 'tentacle',
             name: 'Tentacle',
@@ -134,7 +153,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    // Function to sort sketches alphabetically by name, including nested children
+    function sortSketchesAlphabetically(sketchArray) {
+        sketchArray.sort((a, b) => a.name.localeCompare(b.name));
+        sketchArray.forEach(sketch => {
+            if (sketch.children && sketch.children.length > 0) {
+                sortSketchesAlphabetically(sketch.children);
+            }
+        });
+    }
 
+    // Sort the sketches before populating the list
+    sortSketchesAlphabetically(sketches);
 
     // Populate the sketch list in the sidebar
     function createSketchListItem(sketch, container) {
@@ -178,6 +208,37 @@ document.addEventListener('DOMContentLoaded', () => {
         createSketchListItem(sketch, sketchListContainer);
     });
 
+    // Helper function to load a single script and return a Promise
+    function loadSingleScript(src) {
+        return new Promise((resolve, reject) => {
+            // Remove existing script if it has the same src to avoid re-declaration errors
+            const existingScript = document.querySelector(`script[src="${src}"]`);
+            if (existingScript) {
+                existingScript.remove();
+            }
+
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = false; // Ensure scripts are executed in order of appending for non-module scripts
+            script.onload = () => {
+                console.log(`Script loaded: ${src}`);
+                resolve();
+            };
+            script.onerror = () => {
+                console.error(`Error loading script: ${src}`);
+                reject(new Error(`Error loading script: ${src}`));
+            };
+            document.head.appendChild(script);
+        });
+    }
+
+    // Helper function to load multiple scripts in order
+    async function loadScriptsInOrder(scriptSources) {
+        for (const src of scriptSources) {
+            await loadSingleScript(src);
+        }
+    }
+
     // Function to load and run a sketch
     function findSketchById(id, sketchArray) {
         for (const sketch of sketchArray) {
@@ -190,21 +251,34 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-
-    function loadSketch(sketchId) {
+    async function loadSketch(sketchId) {
         const selectedSketch = findSketchById(sketchId, sketches); // Use the new finder function
         const sketchInfoContainer = document.getElementById('sketch-info'); // Get the sketch-info div
 
-        if (!selectedSketch || !selectedSketch.file) { // Ensure it's a loadable sketch
-            console.error('Sketch not found or not loadable:', sketchId);
+        // --- Hide all sketch-specific control containers first ---
+        // This logic is removed as dynamic UIs will manage themselves
+        // for (const containerId of Object.values(sketchControlContainerIds)) {
+        //     const el = document.getElementById(containerId);
+        //     if (el) el.style.display = 'none';
+        // }
+
+        if (!selectedSketch) { // Simplified check
+            console.error('Sketch not found:', sketchId);
             sketchContainer.innerHTML = '<p>Please select a sketch.</p>';
-            if (sketchInfoContainer) sketchInfoContainer.innerHTML = ''; // Clear sketch info
-            if (currentP5Instance) { // Clean up if a sketch was loaded before this error
+            if (sketchInfoContainer) sketchInfoContainer.innerHTML = '';
+            if (currentP5Instance) {
                 currentP5Instance.remove();
                 currentP5Instance = null;
             }
             return;
         }
+        
+        // Clear previous sketch and its container
+        if (currentP5Instance) {
+            currentP5Instance.remove();
+            currentP5Instance = null;
+        }
+        sketchContainer.innerHTML = ''; // Clear out previous canvas/elements
 
         // Update sketch information display
         if (sketchInfoContainer) {
@@ -223,59 +297,94 @@ document.addEventListener('DOMContentLoaded', () => {
                 infoHtml += `<p class="art-description">${selectedSketch.description}</p>`;
             }
             sketchInfoContainer.innerHTML = infoHtml;
-        } else {
-            console.warn("#sketch-info container not found in the DOM.");
         }
+        
+        // Prepare a clean container for the new sketch
+        const canvasContainerDiv = document.createElement('div');
+        canvasContainerDiv.id = 'canvas-container'; // The ID your sketch.js expects
+        canvasContainerDiv.style.position = 'relative';
+        sketchContainer.appendChild(canvasContainerDiv);
 
-        // 1. Clean up any existing sketch
-        if (currentP5Instance) {
-            currentP5Instance.remove();
-            currentP5Instance = null;
-        }
-        sketchContainer.innerHTML = ''; // Clear container
+        // --- Show controls for the current sketch if any ---
+        // This logic is removed as dynamic UIs will manage themselves
+        // if (selectedSketch.id && sketchControlContainerIds[selectedSketch.id]) {
+        //     const currentControlsId = sketchControlContainerIds[selectedSketch.id];
+        //     const el = document.getElementById(currentControlsId);
+        //     if (el) {
+        //         el.style.display = 'block'; // Or 'flex', or your preferred display style
+        //     } else {
+        //         console.warn(`Controls container with ID '${currentControlsId}' not found in index.html for sketch '${selectedSketch.name}'.`);
+        //     }
+        // }
 
-        // 2. Load the new sketch script
-        const scriptId = 'dynamic-sketch-script';
-        const existingScript = document.getElementById(scriptId);
-        if (existingScript) {
-            existingScript.remove(); // Remove old script tag
-        }
-
-        const script = document.createElement('script');
-        script.id = scriptId;
-        script.src = selectedSketch.file;
-        script.onload = () => {
-            // The script is loaded, now the sketchFunction (e.g., awesomeCirclesSketch) should be globally available
-            if (typeof window[selectedSketch.sketchFunction] === 'function') {
-                // Create a new p5 instance, targeting the 'sketch-container' div
-                currentP5Instance = new p5(window[selectedSketch.sketchFunction], sketchContainer);
-
-                // After the sketch is instantiated (and its setup() has run),
-                // explicitly resize the canvas to the container's current dimensions.
-                // This ensures the canvas matches the container, overriding any specific
-                // dimensions set by createCanvas() within the sketch if they differ from the container.
-                if (currentP5Instance && typeof currentP5Instance.resizeCanvas === 'function') {
-                    if (sketchContainer.offsetWidth > 0 && sketchContainer.offsetHeight > 0) {
-                        currentP5Instance.resizeCanvas(sketchContainer.offsetWidth, sketchContainer.offsetHeight);
-                    } else {
-                        console.warn('Sketch container has zero width or height. p5.js canvas might not be visible or correctly sized.');
-                    }
+        if (selectedSketch.id === 'neuralAnt') {
+            const neuralAntScripts = [
+                'sketches/neural_networks/config.js',
+                'sketches/neural_networks/neural_network.js',
+                'sketches/neural_networks/feature_extractor.js',
+                'sketches/neural_networks/cell.js',
+                'sketches/neural_networks/grid.js',
+                'sketches/neural_networks/ant.js',
+                'sketches/neural_networks/ui.js',
+                'sketches/neural_networks/neural_ant.js'
+            ];
+            try {
+                console.log("Loading scripts for Neural Ant...");
+                await loadScriptsInOrder(neuralAntScripts);
+                if (window[selectedSketch.sketchFunction]) {
+                    currentP5Instance = new p5(window[selectedSketch.sketchFunction], canvasContainerDiv);
+                    console.log(`Neural Ant sketch "${selectedSketch.name}" initialized.`);
+                } else {
+                    console.error(`Sketch function ${selectedSketch.sketchFunction} not found for Neural Ant.`);
+                    sketchContainer.innerHTML = '<p>Error loading Neural Ant sketch function. Check console.</p>';
+                    // Also hide its controls if loading failed -- This is removed
+                    // const controlsId = sketchControlContainerIds[selectedSketch.id];
+                    // if (controlsId) {
+                    //     const el = document.getElementById(controlsId);
+                    //     if (el) el.style.display = 'none';
+                    // }
                 }
-            } else {
-                console.error(`Sketch function ${selectedSketch.sketchFunction} not found after loading ${selectedSketch.file}. Make sure the function is defined globally in the sketch file or assigned to window.`);
-                sketchContainer.innerHTML = `<p>Error: Could not load sketch function ${selectedSketch.sketchFunction}.</p>`;
+            } catch (error) {
+                console.error(`Failed to load scripts for ${selectedSketch.name}: `, error);
+                sketchContainer.innerHTML = '<p>Error loading Neural Ant sketch. Check console.</p>';
+                // Also hide its controls if loading failed -- This is removed
+                // const controlsId = sketchControlContainerIds[selectedSketch.id];
+                // if (controlsId) {
+                //     const el = document.getElementById(controlsId);
+                //     if (el) el.style.display = 'none';
+                // }
             }
-        };
-        script.onerror = () => {
-            console.error('Error loading sketch file:', selectedSketch.file);
-            sketchContainer.innerHTML = '<p>Error loading sketch. Check console.</p>';
-        };
-        document.head.appendChild(script); // Load the script
+        } else if (selectedSketch.file && selectedSketch.sketchFunction) {
+            // Standard loading for other sketches
+            try {
+                await loadSingleScript(selectedSketch.file);
+                if (window[selectedSketch.sketchFunction]) {
+                    currentP5Instance = new p5(window[selectedSketch.sketchFunction], canvasContainerDiv);
+                    console.log(`Sketch "${selectedSketch.name}" initialized.`);
+                } else {
+                    console.error(`Sketch function ${selectedSketch.sketchFunction} not found for ${selectedSketch.name}.`);
+                    sketchContainer.innerHTML = '<p>Error loading sketch function. Check console.</p>';
+                }
+            } catch (error) {
+                console.error(`Failed to load script for ${selectedSketch.name}: `, error);
+                sketchContainer.innerHTML = '<p>Error loading sketch. Check console.</p>';
+            }
+        } else {
+             console.warn(`Sketch ${sketchId} is not configured for loading (no file or sketchFunction).`);
+             if (sketchContainer.innerHTML === '') { // Only update if not already showing an error
+                sketchContainer.innerHTML = '<p>Selected item is not a runnable sketch.</p>';
+             }
+        }
     }
 
     // Initial state
     if (sketches.length > 0) {
         sketchContainer.innerHTML = '<p>Please select a sketch to view.</p>';
+        // --- Hide all sketch-specific control containers initially --- This is removed
+        // for (const containerId of Object.values(sketchControlContainerIds)) {
+        //     const el = document.getElementById(containerId);
+        //     if (el) el.style.display = 'none';
+        // }
         // Check if the first item is a folder or a sketch to avoid errors
         const firstItem = sketches[0];
         if (firstItem && firstItem.file) { // If it's a sketch, load it by default (optional)
