@@ -1,145 +1,51 @@
-body {
-    font-family: sans-serif;
+html, body {
     margin: 0;
-    background-color: #f4f4f4;
-    color: #333;
-    /* display: flex; */ /* Removed to allow app-container to manage flex */
-    /* flex-direction: column; */ /* Removed */
-    min-height: 100vh;
-}
-
-#app-container {
-    display: flex;
-    min-height: 100vh; /* Make app container fill viewport height */
-}
-
-#sidebar {
-    width: 250px; /* Fixed width for sidebar, adjust as needed */
-    /* flex: 0 0 250px; */ /* Alternative: flex-grow, flex-shrink, flex-basis */
-    background-color: #e9e9e9;
-    padding: 15px;
-    height: 100vh; /* Full viewport height */
-    overflow-y: auto; /* Add scroll for long sketch lists */
-    box-sizing: border-box;
-    border-right: 1px solid #ccc;
-}
-
-#sidebar h3 {
-    margin-top: 0;
-    color: #333;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 10px;
-}
-
-#sketch-list-container {
-    list-style-type: none;
     padding: 0;
-    margin: 0;
+    overflow: hidden; /* Prevents scrollbars */
 }
-
-#sketch-list-container li {
-    padding: 10px 5px;
-    cursor: pointer;
-    border-bottom: 1px solid #ddd;
-    font-size: 0.95em;
-}
-
-#sketch-list-container li:hover {
-    background-color: #d8d8d8;
-}
-
-#sketch-list-container li.active {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-}
-
-#content-wrapper {
-    flex-grow: 1; /* Takes remaining space */
-    display: flex;
-    flex-direction: column; /* To stack header, main, footer */
-    /* overflow-y: auto; */ /* Allow content itself to scroll if needed, not the whole wrapper */
-}
-
-
-footer {
-    /* background-color: #333; */ /* Original background */
-    background-color: transparent; /* New: Transparent background */
-    /* color: #ccc; */ /* REMOVE default color, will be handled by classes */
-    padding: 5px 1em; /* New: Reduced padding */
-    /* text-align: center; */ /* REMOVE: to make text align left for a single line */
-    position: absolute; /* New: Position absolutely */
-    left: 0;
-    width: 100%;
-    box-sizing: border-box; /* Ensure padding doesn't add to width */
-    z-index: 10; /* Ensure it's above other content in main, like the canvas */
-    font-size: 0.8em; /* New: Make text smaller */
-}
-
-/* New classes for footer text color based on sketch background */
-footer.light-text p {
-    color: #f0f0f0; /* Light text color for dark sketch backgrounds */
-}
-
-footer.dark-text p {
-    color: #333; /* Dark text color for light sketch backgrounds */
-}
-
-main {
-    flex-grow: 1; /* Main content area takes available space within content-wrapper */
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative; /* New: Make main a positioning context for the absolute footer */
-    /* overflow-y: auto; */
-}
-
-/* Aspect Ratio Wrapper */
-#sketch-aspect-ratio-wrapper {
-    width: 100%; /* Max width of the sketch container */
-    height: 100%;
-    margin: 0; /* Or whatever fixed max width you prefer */
-    position: relative; /* Needed for absolute positioning of the child */
-    background-color: transparent; /* Placeholder, you'll see the canvas over it */
-}
-
-
-
-
-
 
 #sketch-container {
-    position: absolute;
+    margin: 0;
+    padding: 0;
+    display: block; /* p5.js canvas is a block element by default */
+}
+
+/* Navigation Bar Styling */
+nav {
+    background-color: #333; /* Dark background for the nav bar */
+    overflow: hidden; /* Clear floats */
+    width: 100%; /* Make nav span full width */
+    position: fixed; /* Stick it to the top */
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex; /* Helps center canvas if it's smaller */
-    justify-content: center;
-    align-items: center;
+    z-index: 1000; /* Ensure it stays on top */
 }
 
-/* Ensure canvas itself doesn't have extra margins/paddings */
-#sketch-container canvas {
-    display: block; /* Removes extra space below canvas if it's an inline element */
-    max-width: 100%;
-    max-height: 100%;
-    border: 4px dashed black; /* Default border */
-    box-sizing: border-box; /* Ensures border is inside the element's dimensions */
+nav ul {
+    list-style-type: none; /* Remove bullet points */
+    margin: 0;
+    padding: 0;
+    text-align: center; /* Center the list items */
 }
 
-/* New rules for dynamic canvas border color */
-#sketch-container.light-bg-sketch canvas {
-    border-color: black; /* Dark border for light sketch backgrounds */
+nav ul li {
+    display: inline-block; /* Display list items horizontally */
 }
 
-#sketch-container.dark-bg-sketch canvas {
-    border-color: #f0f0f0; /* Light border for dark sketch backgrounds */
-}
-
-#sketch-info {
+nav ul li a {
+    display: block; /* Make the entire area clickable */
+    color: white; /* White text color */
     text-align: center;
-    padding:0;
-    margin:0;
+    padding: 14px 16px; /* Add some padding */
+    text-decoration: none; /* Remove underline */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
 }
+
+nav ul li a:hover {
+    background-color: #111; /* Darker background on hover */
+}
+
+/* Adjust body padding to prevent content from hiding behind the fixed nav */
+body {
+    padding-top: 50px; /* Adjust this value based on nav height */
+} 

@@ -2,17 +2,16 @@
 //      Ant Class
 // ===========================
 class Ant {
-    constructor(x, y, gridRef, nnRef, featureExtractorRef, config, p5Instance) {
+    constructor(x, y, gridRef, nnRef, featureExtractorRef, config, /* p5Instance */) {
         this.x = x;
         this.y = y;
         this.grid = gridRef;
         this.nn = nnRef;
         this.featureExtractor = featureExtractorRef;
         this.config = config;
-        this.p = p5Instance;
 
         // Directions: 0: Up (-Y), 1: Right (+X), 2: Down (+Y), 3: Left (-X)
-        this.dir = this.p.floor(this.p.random(4));
+        this.dir = floor(random(4));
     }
 
     // Helper to get state of a cell relative to ant's position and direction
@@ -100,31 +99,31 @@ class Ant {
     }
 
     _resetPosition() {
-        this.x = this.p.floor(this.grid.cols / 2);
-        this.y = this.p.floor(this.grid.rows / 2);
-        this.dir = this.p.floor(this.p.random(4));
+        this.x = floor(this.grid.cols / 2);
+        this.y = floor(this.grid.rows / 2);
+        this.dir = floor(random(4));
         console.log("Ant position reset.");
     }
 
     display() {
-        this.p.push();
-        this.p.translate(this.x * this.config.CELL_SIZE + this.config.CELL_SIZE / 2, 
+        push();
+        translate(this.x * this.config.CELL_SIZE + this.config.CELL_SIZE / 2, 
                          this.y * this.config.CELL_SIZE + this.config.CELL_SIZE / 2);
         
         const antBodyColor = this.config.ANT_COLOR || [255,0,0,150]; // Default red if not in config
-        this.p.fill(antBodyColor[0], antBodyColor[1], antBodyColor[2], antBodyColor[3]);
-        this.p.noStroke();
-        this.p.ellipse(0, 0, this.config.CELL_SIZE * 0.7, this.config.CELL_SIZE * 0.7);
+        fill(antBodyColor[0], antBodyColor[1], antBodyColor[2], antBodyColor[3]);
+        noStroke();
+        ellipse(0, 0, this.config.CELL_SIZE * 0.7, this.config.CELL_SIZE * 0.7);
 
         // Draw a line indicating direction
-        this.p.stroke(0,0,0, 200); // Black line for direction
-        this.p.strokeWeight(1);
+        stroke(0,0,0, 200);
+        strokeWeight(1);
         let len = this.config.CELL_SIZE * 0.35;
-        if (this.dir === 0) this.p.line(0, 0, 0, -len);    // Up
-        else if (this.dir === 1) this.p.line(0, 0, len, 0); // Right
-        else if (this.dir === 2) this.p.line(0, 0, 0, len); // Down
-        else if (this.dir === 3) this.p.line(0, 0, -len, 0);// Left
+        if (this.dir === 0) line(0, 0, 0, -len);    // Up
+        else if (this.dir === 1) line(0, 0, len, 0); // Right
+        else if (this.dir === 2) line(0, 0, 0, len); // Down
+        else if (this.dir === 3) line(0, 0, -len, 0);// Left
         
-        this.p.pop();
+        pop();
     }
 }

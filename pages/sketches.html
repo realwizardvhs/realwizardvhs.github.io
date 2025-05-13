@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
+    <link rel="stylesheet" href="/style.css">
+    <title>Sketches</title>
+</head>
+<body>
+    <div id="nav"></div>
+    <div id="sketches-grid-list"></div>
+    <script src="/nav.js"></script>
+    <script>
+        const sketchesRaw = {
+            "/sketches/particle_typography/sketch.html": "Particle Typography",
+            "/sketches/simple_grid/sketch.html": "Simple Grid",
+            "/sketches/particle_drawer/sketch.html": "Particle Drawer",
+            "/sketches/particle_pusher/sketch.html": "Particle Pusher",
+            "/sketches/sine_waves/sine_waves_1/sketch.html": "Sine Waves 1",
+            "/sketches/sine_waves/sine_waves_2/sketch.html": "Sine Waves 2",
+            "/sketches/sine_waves/sine_waves_3/sketch.html": "Sine Waves 3",
+            "/sketches/ascii/ascii_1/sketch.html": "ASCII 1",
+            "/sketches/ascii/ascii_2/sketch.html": "ASCII 2",
+            "/sketches/ascii/ascii_3/sketch.html": "ASCII 3",
+            "/sketches/ascii/ascii_4/sketch.html": "ASCII 4",
+            "/sketches/from_life/sketch.html": "From Life",
+            "/sketches/spinning_circles/sketch.html": "Spinning Circles",
+            "/sketches/spinning_shapes/sketch.html": "Spinning Shapes",
+            "/sketches/tentacle/sketch.html": "Tentacle",
+        };
+
+        const sketches = Object.fromEntries(
+            Object.entries(sketchesRaw).sort(([,a], [,b]) => a.localeCompare(b))
+        );
+
+        const sketchesGridList = document.getElementById("sketches-grid-list");
+        sketchesGridList.innerHTML = Object.entries(sketches).map(([path, name]) => {
+            return `
+            <a href="${path}">
+                <div class="sketch-grid-item">
+                    <h3>${name}</h3>
+                </div>
+            </a>
+            `
+        }).join("");
+    </script>
+</body>
+</html>
+

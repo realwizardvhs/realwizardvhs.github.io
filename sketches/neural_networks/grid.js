@@ -2,11 +2,10 @@
 //      Grid Class
 // ===========================
 class Grid {
-    constructor(cols, rows, cellSize, p5Instance, initMode = 'all_off') {
+    constructor(cols, rows, cellSize, /* p5Instance, */ initMode = 'all_off') {
         this.cols = cols;
         this.rows = rows;
         this.cellSize = cellSize;
-        this.p = p5Instance;
         this.cells = [];
 
         for (let i = 0; i < this.cols; i++) {
@@ -14,9 +13,9 @@ class Grid {
             for (let j = 0; j < this.rows; j++) {
                 let initialState = 0;
                 if (initMode === 'random') {
-                    initialState = this.p.floor(this.p.random(2));
+                    initialState = floor(random(2));
                 }
-                this.cells[i][j] = new Cell(i, j, this.cellSize, this.p, initialState);
+                this.cells[i][j] = new Cell(i, j, this.cellSize, initialState);
             }
         }
     }
